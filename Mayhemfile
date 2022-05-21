@@ -1,0 +1,9 @@
+image: ghcr.io/capuanob/timelib-fuzz:latest
+project: timelib
+target: timelib-fuzz
+tests:
+  - file://fuzz/corpus
+
+cmds:
+  - cmd: /timelib-fuzz -close_fd_mask=2
+    libfuzzer: true
