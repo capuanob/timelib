@@ -36,6 +36,7 @@ tests/enumerate-timezones
 timelib.a
 timelib.o
 timelib_config.h
+timelib-fuzz
 tm2unixtime.o
 unixtime2tm.o
 zones/.cvsignore

@@ -1,8 +1,16 @@
+ifdef BUILD_FUZZ
+FLAGS=-O0 -ggdb3 \
+	-Wall -Wextra -fsanitize=fuzzer-no-link -fsanitize=undefined \
+	-Wuninitialized -Wmissing-field-initializers -Wshadow -Wno-unused-parameter \
+	-pedantic -Wno-implicit-fallthrough \
+	-DHAVE_STDINT_H -DHAVE_GETTIMEOFDAY -DHAVE_UNISTD_H -DHAVE_DIRENT_H -I.# -DDEBUG_PARSER
+else
 FLAGS=-O0 -ggdb3 \
 	-Wall -Werror -Wextra -fsanitize=undefined -fsanitize=address \
 	-Wmaybe-uninitialized -Wmissing-field-initializers -Wshadow -Wno-unused-parameter \
 	-pedantic -Wno-implicit-fallthrough \
 	-DHAVE_STDINT_H -DHAVE_GETTIMEOFDAY -DHAVE_UNISTD_H -DHAVE_DIRENT_H -I.# -DDEBUG_PARSER
+endif
 
 CFLAGS=-Wdeclaration-after-statement ${FLAGS}
 
@@ -12,8 +20,20 @@ LDFLAGS=-lm -fsanitize=undefined -l:libubsan.so
 
 TEST_LDFLAGS=-lCppUTest
 
+FUZZ_FLAGS=-O0 -ggdb3 \
+	-Wall -Wextra -fsanitize=fuzzer -fsanitize=undefined \
+	-Wuninitialized -Wmissing-field-initializers -Wshadow -Wno-unused-parameter \
+	-pedantic -Wno-implicit-fallthrough \
+	-DHAVE_STDINT_H -DHAVE_GETTIMEOFDAY -DHAVE_UNISTD_H -DHAVE_DIRENT_H -I.# -DDEBUG_PARSER
+
+ifdef BUILD_FUZZ
+$(info Building fuzzer...)
+CC=clang
+CXX=clang++
+else
 CC=gcc
 CXX=g++
+endif
 
 MANUAL_TESTS=tests/tester-parse-interval \
 	tests/tester-iso-week tests/test-abbr-to-id \
@@ -116,6 +136,9 @@ clean:
 
 ctest: tests/c/all_tests.cpp timelib.a ${C_TESTS}
 	$(CXX) $(CPPFLAGS) $(LDFLAGS) tests/c/all_tests.cpp ${C_TESTS} timelib.a $(TEST_LDFLAGS) -o ctest
+
+fuzzer: fuzz/fuzz.c timelib.a
+	clang $(FUZZ_FLAGS) $(LDFLAGS) fuzz/fuzz.c timelib.a -o timelib-fuzz
 
 test: ctest
 	@./ctest -c
