@@ -137,8 +137,8 @@ clean:
 ctest: tests/c/all_tests.cpp timelib.a ${C_TESTS}
 	$(CXX) $(CPPFLAGS) $(LDFLAGS) tests/c/all_tests.cpp ${C_TESTS} timelib.a $(TEST_LDFLAGS) -o ctest
 
-fuzzer: fuzz/fuzz.c timelib.a
-	clang $(FUZZ_FLAGS) $(LDFLAGS) fuzz/fuzz.c timelib.a -o timelib-fuzz
+fuzzer: fuzz/fuzz_string_conv.c timelib.a
+	clang $(FUZZ_FLAGS) $(LDFLAGS) fuzz/fuzz_string_conv.c timelib.a -o timelib-fuzz
 
 test: ctest
 	@./ctest -c
