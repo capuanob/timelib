@@ -3,5 +3,5 @@ project: timelib
 target: timelib-fuzz
 
 cmds:
-  - cmd: /timelib-fuzz -close_fd_mask=2
+  - cmd: /timelib-fuzz
     libfuzzer: true
