@@ -6,10 +6,8 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y cmake clang git build-essential re2c libcpputest-dev libubsan1
 
 ## Add source code to the build stage.
-WORKDIR /
-RUN git clone https://github.com/capuanob/timelib.git
+ADD . /timelib
 WORKDIR /timelib
-RUN git checkout mayhem
 
 ## Build
 RUN make fuzzer -j$(nproc) BUILD_FUZZ=1
